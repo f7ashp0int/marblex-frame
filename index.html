@@ -110,6 +110,37 @@
 
         #previewContainer {
             position: relative;
+
+            <div class="creator-section">
+  <p class="creator-text">Thank the creator by Following on X</p>
+  <a href="https://x.com/itsf7ash" target="_blank">
+    <img src="f7ash.png" alt="F7ASH Logo" class="creator-logo">
+  </a>
+</div>
+
+<style>
+.creator-section {
+  text-align: center;
+  margin-top: 2rem;
+  padding: 1rem;
+  border-top: 1px solid #333;
+}
+
+.creator-text {
+  color: #25f351;
+  margin-bottom: 0.5rem;
+}
+
+.creator-logo {
+  width: 30px;
+  height: 30px;
+  transition: transform 0.2s;
+}
+
+.creator-logo:hover {
+  transform: scale(1.1);
+}
+</style>
         }
     </style>
 </head>
@@ -132,13 +163,6 @@
             <button class="download-btn" id="downloadBtn">Download</button>
         </div>
     </div>
-      <!-- Thank the Creator Section -->
-  <div class="creator-section">
-  <p class="creator-text">Thank the creator by Following on X</p>
-  <a href="https://x.com/itsf7ash" target="_blank">
-    <img src="f7ash.png" alt="F7ASH Logo" class="creator-logo">
-  </a>
-</div>
 
     <script>
         const imageUpload = document.getElementById('imageUpload');
