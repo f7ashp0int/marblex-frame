@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Branded Profile Frames</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .frame-container {
+            width: 500px;
+            height: 500px;
+            position: relative;
+            margin: 2rem auto;
+            border: 2px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        #userImage {
+            z-index: 2;
+            object-fit: cover;
+        }
+
+        #foreground {
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .upload-btn {
+            background-color: #25f351;
+            color: #000;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .download-btn {
+            background-color: #25f351;
+            color: #000;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .instructions {
+            text-align: center;
+            color: #888;
+            margin-bottom: 2rem;
+        }
+
+        #previewContainer {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Brand Your Profile Picture</h1>
+        <p class="instructions">Upload your profile picture to apply our exclusive frame</p>
+        
+        <div id="previewContainer" class="frame-container">
+            <img src="your-background-image-url.jpg" class="layer" id="background">
+            <img id="userImage" class="layer">
+            <img src="your-foreground-frame-url.png" class="layer" id="foreground">
+        </div>
+
+        <div class="controls">
+            <label class="upload-btn">
+                Upload PNG
+                <input type="file" id="imageUpload" accept="image/png">
+            </label>
+            <button class="download-btn" id="downloadBtn">Download</button>
+        </div>
+    </div>
+
+    <script>
+        const imageUpload = document.getElementById('imageUpload');
+        const userImage = document.getElementById('userImage');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const previewContainer = document.getElementById('previewContainer');
+
+        imageUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    userImage.src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        downloadBtn.addEventListener('click', function() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const containerRect = previewContainer.getBoundingClientRect();
+            
+            canvas.width = containerRect.width;
+            canvas.height = containerRect.height;
+
+            // Create promise chain to ensure all images are loaded
+            Promise.all([
+                loadImage(document.getElementById('background').src),
+                loadImage(userImage.src),
+                loadImage(document.getElementById('foreground').src)
+            ]).then(([bgImg, userImg, fgImg]) => {
+                ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+                ctx.drawImage(userImg, 0, 0, canvas.width, canvas.height);
+                ctx.drawImage(fgImg, 0, 0, canvas.width, canvas.height);
+                
+                const link = document.createElement('a');
+                link.download = 'branded-profile.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        });
+
+        function loadImage(src) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = src;
+            });
+        }
+    </script>
+</body>
+</html>
